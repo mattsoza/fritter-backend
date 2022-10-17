@@ -1,0 +1,8 @@
+Abstract Data Models:
+
+User => {username: string, email: string, password: string, dateJoined: date}
+
+Freet/comments => {textContent: string, image: buffer, author: string, comments: {collections.comments.id}, dateCreated, parent: freet.id}
+
+Tag: => {tagName: string}
+
