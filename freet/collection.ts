@@ -16,17 +16,26 @@ class FreetCollection {
    * Add a freet to the collection
    *
    * @param {string} authorId - The id of the author of the freet
-   * @param {string} content - The id of the content of the freet
+   * @param {string} content - The content of the freet
    * @return {Promise<HydratedDocument<Freet>>} - The newly created freet
    */
-  static async addOne(authorId: Types.ObjectId | string, content: string): Promise<HydratedDocument<Freet>> {
+  static async addOne(authorId: Types.ObjectId | string, content: string, parent?: Types.ObjectId): Promise<HydratedDocument<Freet>> {
     const date = new Date();
+    let forumBool = false;
+    if (parent) {
+      const parentFreet = await FreetModel.findById(parent);
+      if ((parentFreet?.forum) || (parentFreet.parent === undefined && content.length > 240)) {
+        forumBool = true;
+      }
+    }
+
     const freet = new FreetModel({
       authorId,
       dateCreated: date,
       content,
-      image: Buffer,
-      dateModified: date
+      // Image: Buffer,
+      dateModified: date,
+      forum: forumBool
     });
     await freet.save(); // Saves freet to MongoDB
     return freet.populate('authorId');

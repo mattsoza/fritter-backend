@@ -2,7 +2,81 @@ Abstract Data Models:
 
 User => {username: string, email: string, password: string, dateJoined: date}
 
-Freet/comments => {textContent: string, image: buffer, author: string, comments: {collections.comments.id}, dateCreated, parent: freet.id}
+Freet/comments => {textContent: string, image: buffer, author: string, comments: {collections.comments.id}, dateCreated, parent: freet.id, forumFreet: boolean}
 
 Tag: => {tagName: string}
 
+TODO:
+- Add image and parent to Freets
+- Create the tag concept
+- Add email to data field for user
+
+A freet and it's comments can be represented as a tree with pointers in both directions
+
+
+http://fritter.com/api/freets/871247890124
+http://fritter.com/api/freets/image/1
+http://fritter.com/api/user/mattsoza
+
+// Returns all freets
+GET: /api/freets
+
+// Creates a new freet
+POST: /api/freets
+JSON:
+{
+    textContent: String,
+    image: Buffer,
+    author: String
+}
+
+10/17/22
+PROBLEM: can a regular freet respond to a forum freet and vice versa? What differentiates these?
+SOLUTION: You can zoom in on any freet, but there are rules for when forum and freet mode are enabled, 
+and what size freets can respond to others.
+1) Any freet can be focused. However, only freets with no parent will have a distinct forum and freet mode
+2) A forum freet may receive responses of any length. However, a freet may only receive responses of freet length
+3) A freet length tweet commenting on a head may be tagged as forum
+4) Freets will now need a new data field, "forum". A boolean which indicates whether it's highest level comment freet is part of the forum originally
+
+ADM (new and improved!):
+
+Concept: Freet
+State
+
+
+
+10/22/2022
+Designing routes:
+
+I took some time to sit down and think about the routes I wanted to plan, and came up with the following:
+
+CRUD for freets
+GET     /api/freets/authorID
+GET     /api/freets/tag
+GET     /api/freets/forum
+GET     /api/freets/id
+POST    /api/freets/create
+PUT     /api/freets/id
+DELETE  /api/freets/id
+
+Sign-in sign-out functionality
+GET     /api/users/sessions
+DELETE  /api/users/sessions
+
+Viewing user information
+GET     /api/users/id
+GET     /api/users/username
+GET     /api/users/id/following
+GET     /api/users/id/followers
+
+When making this I had to come to two decisions: 1) Is "user" going to be just a store for signing in
+and out with a seperate "userProfile" containing information accessibile to others, or will "user" 
+encompass both? I decided for the latter since, at the end of the day, all this information is 
+relevant to the concept of a "user". The only difference is what is accessible by who.
+The second decision was whether or not viewing user information in the form of followers and following
+could be queried using a username in the api. I decided no, since username's are meant to be mutable 
+(eventually) and id is meant to be immutable.
+
+10/22/2022, 8:30pm
+As I'm developing this, I'm realizing there's going to be difficulties in file upload, and may temporarliy cut out the image part of tweets, as they aren't strictly necessary for this proof of concept

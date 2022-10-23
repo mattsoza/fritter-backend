@@ -14,8 +14,11 @@ export type Freet = {
   parent: Types.ObjectId;
   dateCreated: Date;
   content: string;
+  tags: [string];
   image: Buffer;
   dateModified: Date;
+  comments: [Types.ObjectId];
+  forum: boolean;
 };
 
 export type PopulatedFreet = {
@@ -40,7 +43,6 @@ const FreetSchema = new Schema<Freet>({
   parent: {
     type: Schema.Types.ObjectId,
     required: false
-
   },
   // The date the freet was created
   dateCreated: {
@@ -52,14 +54,24 @@ const FreetSchema = new Schema<Freet>({
     type: String,
     required: true
   },
-  // Image if the tweet has an image
-  image: {
-    type: Buffer,
-    required: true
+  tags: {
+    type: [String]
   },
+  // Image if the tweet has an image
+  // image: {
+  //   type: Buffer,
+  //   required: false
+  // },
   // The date the freet was modified
   dateModified: {
     type: Date,
+    required: true
+  },
+  comments: {
+    type: [Schema.Types.ObjectId]
+  },
+  forum: {
+    type: Boolean,
     required: true
   }
 });
