@@ -4,6 +4,8 @@ import FreetCollection from './collection';
 import * as userValidator from '../user/middleware';
 import * as freetValidator from '../freet/middleware';
 import * as util from './util';
+import type {Freet} from './model';
+import e from 'express';
 
 const router = express.Router();
 
@@ -70,7 +72,7 @@ router.get(
 /**
  * Get the comments to a tweet
  *
- * @name GET /api/freets/:id/comments
+ * @name GET /api/freets/:id/comments?forum=bool
  *
  * @return {freetResponse[]} An array of freets that are comments to the id
  * @throws {404} - If no tweet with the given id exists
@@ -87,8 +89,19 @@ router.get(
       freetComments.push(FreetCollection.findOne(id));
     }
 
-    // Freetcomments are started in parallel and then await is used to delay response until ready
-    res.status(200).json((await Promise.all(freetComments)).map(util.constructFreetResponse));
+    console.log(req.query);
+    if (req.query.forum === 'true') {
+      res.status(200).json((await Promise.all(freetComments)).filter(
+        (freet: Freet) => freet.forum
+      ).map(util.constructFreetResponse));
+    } else if (req.query.forum === 'false') {
+      res.status(200).json((await Promise.all(freetComments)).filter(
+        (freet: Freet) => !freet.forum
+      ).map(util.constructFreetResponse));
+    } else {
+      // Freetcomments are started in parallel and then await is used to delay response until ready
+      res.status(200).json((await Promise.all(freetComments)).map(util.constructFreetResponse));
+    }
   }
 );
 
@@ -129,15 +142,15 @@ router.post(
  * @return {FreetResponse} - The created freet
  * @throws {403} - If the user is not logged in
  * @throws {404} - If the freetId doesn't exist
- * @throws {400} - If the freet content is empty or a stream of empty spaces
- * @throws {413} - If the freet content is more than 140 characters long
+ * @throws {400} - If the comment content is empty or a stream of empty spaces
+ * @throws {413} - If the comment content is more than 140 characters long and not part of a forum
  */
 router.post(
   '/:freetId',
   [
     userValidator.isUserLoggedIn,
-    freetValidator.isValidFreetContent,
-    freetValidator.isFreetExists
+    freetValidator.isFreetExists,
+    freetValidator.isValidComment
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? '';

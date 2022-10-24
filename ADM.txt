@@ -95,14 +95,14 @@ PUT     /api/freets/:id             [X]
 DELETE  /api/freets/:id             [X]
 
 // Comment functionality
-!GET     /api/freets/id/comments                 // Gets all the comments for the given freet
-GET     /api/freets/id/comments?forum=<boolean> // Gets comments either of type forum or not-forum
-POST    /api/freets/:id                          // Posts a comment on the current freet
+GET     /api/freets/id/comments                 [x]    // Gets all the comments for the given freet
+GET     /api/freets/id/comments?forum=<boolean> [x]    // Gets comments either of type forum or not-forum
+POST    /api/freets/:id                         [x]    // Posts a comment on the current freet
 
 
 **Sign-in sign-out functionality**
-POST    /api/users/sessions                     // Signs-in a user
-DELETE  /api/users/sessions                     // Signs-out a user
+POST    /api/users/sessions                     [x]    // Signs-in a user
+DELETE  /api/users/sessions                     [x]    // Signs-out a user
 
 Viewing user information
 GET     /api/users/id
@@ -111,3 +111,6 @@ GET     /api/users/id/following
 GET     /api/users/id/followers
 
 Interesting problem: If you delete a freet, should its subfreets also be deleted? I think the answer should be no.
+
+10/24/2022, 1:30am
+Solved the problem of comments and freets. I ended up creating new router paths and middleware to validate them. It still makes sense to have them be the same object, but they definitely have different uses.

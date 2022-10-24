@@ -43,6 +43,26 @@ const isValidFreetContent = (req: Request, res: Response, next: NextFunction) =>
   next();
 };
 
+const isValidComment = async (req: Request, res: Response, next: NextFunction) => {
+  const {content} = req.body as {content: string};
+  if (!content.trim()) {
+    res.status(400).json({
+      error: 'Comment must be at least one character long.'
+    });
+    return;
+  }
+
+  const parentFreet = await FreetCollection.findOne(req.params.freetId);
+  if (!(content.length > 140 && (parentFreet.forum || !parentFreet.parent)) && !(content.length < 140)) {
+    res.status(413).json({
+      error: 'Comments can only be >140 characters if its parent freet is not a comment or is in forum mode'
+    });
+    return;
+  }
+
+  next();
+};
+
 /**
  * Checks if the current user is the author of the freet whose freetId is in req.params
  */
@@ -62,5 +82,6 @@ const isValidFreetModifier = async (req: Request, res: Response, next: NextFunct
 export {
   isValidFreetContent,
   isFreetExists,
-  isValidFreetModifier
+  isValidFreetModifier,
+  isValidComment
 };

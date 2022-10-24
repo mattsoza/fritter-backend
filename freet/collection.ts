@@ -2,6 +2,7 @@ import type {HydratedDocument, Types} from 'mongoose';
 import type {Freet} from './model';
 import FreetModel from './model';
 import UserCollection from '../user/collection';
+import mongoose from 'mongoose';
 
 /**
  * This files contains a class that has the functionality to explore freets
@@ -14,6 +15,7 @@ import UserCollection from '../user/collection';
 class FreetCollection {
   /**
    * Add a freet to the collection
+   * Update the parent if necessary
    *
    * @param {string} authorId - The id of the author of the freet
    * @param {string} content - The content of the freet
@@ -21,13 +23,7 @@ class FreetCollection {
    */
   static async addOne(authorId: Types.ObjectId | string, content: string, parent?: Types.ObjectId | string, tags?: [string]): Promise<HydratedDocument<Freet>> {
     const date = new Date();
-    let forumBool = false;
-    if (parent) {
-      const parentFreet = await FreetModel.findById(parent);
-      if ((parentFreet?.forum) || (parentFreet.parent === undefined && content.length > 140)) {
-        forumBool = true;
-      }
-    }
+    let parentFreet;
 
     const freet = new FreetModel({
       authorId,
@@ -36,9 +32,22 @@ class FreetCollection {
       content,
       tags,
       dateModified: date,
-      forum: forumBool
+      forum: false
     });
+
+    if (parent) {
+      parentFreet = await FreetModel.findById(parent);
+      if ((parentFreet?.forum) || (parentFreet.parent === undefined && content.length > 140)) {
+        freet.forum = true;
+      }
+
+      const newComments = parentFreet.comments; // Saves new comment to parent's comments
+      newComments.push(freet._id);
+      await parentFreet.save();
+    }
+
     await freet.save(); // Saves freet to MongoDB
+
     return freet.populate('authorId');
   }
 
