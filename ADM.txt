@@ -79,4 +79,35 @@ could be queried using a username in the api. I decided no, since username's are
 (eventually) and id is meant to be immutable.
 
 10/22/2022, 8:30pm
-As I'm developing this, I'm realizing there's going to be difficulties in file upload, and may temporarliy cut out the image part of tweets, as they aren't strictly necessary for this proof of concept
+As I'm developing this, I'm realizing there's going to be difficulties in file upload, and may temporarliy cut out the image part of 
+tweets, as they aren't strictly necessary for this proof of concept
+
+10/23/2022, 7:15pm
+I'm looking at some of the CRUD I wrote above for /api/freets and realizing it doesn't hold up. I have multiple GET requests at 
+/api/freets/req and have no way to differentiate any of them. Below is my rewrite.
+
+CRUD for freets
+GET     /api/freets?author=id       [X]
+GET     /api/freets?tag=<name>      []
+GET     /api/freets/:id             [X]
+POST    /api/freets/                [X]
+PUT     /api/freets/:id             [X]
+DELETE  /api/freets/:id             [X]
+
+// Comment functionality
+!GET     /api/freets/id/comments                 // Gets all the comments for the given freet
+GET     /api/freets/id/comments?forum=<boolean> // Gets comments either of type forum or not-forum
+POST    /api/freets/:id                          // Posts a comment on the current freet
+
+
+**Sign-in sign-out functionality**
+POST    /api/users/sessions                     // Signs-in a user
+DELETE  /api/users/sessions                     // Signs-out a user
+
+Viewing user information
+GET     /api/users/id
+GET     /api/users/username
+GET     /api/users/id/following
+GET     /api/users/id/followers
+
+Interesting problem: If you delete a freet, should its subfreets also be deleted? I think the answer should be no.

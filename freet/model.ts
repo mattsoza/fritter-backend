@@ -15,7 +15,6 @@ export type Freet = {
   dateCreated: Date;
   content: string;
   tags: [string];
-  image: Buffer;
   dateModified: Date;
   comments: [Types.ObjectId];
   forum: boolean;

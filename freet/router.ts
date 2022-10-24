@@ -18,7 +18,7 @@ const router = express.Router();
 /**
  * Get freets by author.
  *
- * @name GET /api/freets?authorId=id
+ * @name GET /api/freets?author=id
  *
  * @return {FreetResponse[]} - An array of freets created by user with id, authorId
  * @throws {400} - If authorId is not given
@@ -49,6 +49,50 @@ router.get(
 );
 
 /**
+ * Get an individual tweet
+ *
+ * @name GET /api/freets/:id
+ *
+ * @return {freetResponse} - A single freet with the given id
+ * @throws {404} - if no tweet with the given id exists
+ */
+router.get(
+  '/:freetId?',
+  [
+    freetValidator.isFreetExists
+  ],
+  async (req: Request, res: Response) => {
+    const freet = await FreetCollection.findOne(req.params.freetId);
+    res.status(200).json([freet].map(util.constructFreetResponse));
+  }
+);
+
+/**
+ * Get the comments to a tweet
+ *
+ * @name GET /api/freets/:id/comments
+ *
+ * @return {freetResponse[]} An array of freets that are comments to the id
+ * @throws {404} - If no tweet with the given id exists
+ */
+router.get(
+  '/:freetId/comments',
+  [
+    freetValidator.isFreetExists
+  ],
+  async (req: Request, res: Response) => {
+    const freet = await FreetCollection.findOne(req.params.freetId);
+    const freetComments = [];
+    for (const id of freet.comments) {
+      freetComments.push(FreetCollection.findOne(id));
+    }
+
+    // Freetcomments are started in parallel and then await is used to delay response until ready
+    res.status(200).json((await Promise.all(freetComments)).map(util.constructFreetResponse));
+  }
+);
+
+/**
  * Create a new freet.
  *
  * @name POST /api/freets
@@ -71,6 +115,36 @@ router.post(
 
     res.status(201).json({
       message: 'Your freet was created successfully.',
+      freet: util.constructFreetResponse(freet)
+    });
+  }
+);
+
+/**
+ * Create a new comment to a freet.
+ *
+ * @name POST /api/freets/:id
+ *
+ * @param {string} content - The content of the freet
+ * @return {FreetResponse} - The created freet
+ * @throws {403} - If the user is not logged in
+ * @throws {404} - If the freetId doesn't exist
+ * @throws {400} - If the freet content is empty or a stream of empty spaces
+ * @throws {413} - If the freet content is more than 140 characters long
+ */
+router.post(
+  '/:freetId',
+  [
+    userValidator.isUserLoggedIn,
+    freetValidator.isValidFreetContent,
+    freetValidator.isFreetExists
+  ],
+  async (req: Request, res: Response) => {
+    const userId = (req.session.userId as string) ?? '';
+    const freet = await FreetCollection.addOne(userId, req.body.content, req.params.freetId);
+
+    res.status(201).json({
+      message: 'Your comment was created successfully.',
       freet: util.constructFreetResponse(freet)
     });
   }
