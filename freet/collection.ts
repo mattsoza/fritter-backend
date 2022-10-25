@@ -83,6 +83,23 @@ class FreetCollection {
   }
 
   /**
+   * Get 1 page of freets, specifided by page number
+   *
+   * @param {int} pageNumber - The page number we want freets from
+   * @return {Promise<HydratedDocument<Freet>[]>} - An array of freets from the page
+   */
+
+  static async findFreetsOnPage(pageNumber: number): Promise<Array<HydratedDocument<Freet>>> {
+    const resultsPerPage = 20;
+    const page = pageNumber >= 1 ? (pageNumber - 1) : 0;
+    const date = new Date();
+
+    return FreetModel.find({dateModified: {$lte: date}})
+      .skip(resultsPerPage * page)
+      .limit(resultsPerPage);
+  }
+
+  /**
    * Update a freet with the new content
    *
    * @param {string} freetId - The id of the freet to be updated
