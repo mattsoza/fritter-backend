@@ -181,6 +181,12 @@ This renders the `index.html` file that will be used to interact with the backen
 
 - An array of all freets sorted in descending order by date modified
 
+#### `GET /api/freets?tag=TAGNAME` - Get freets by tag
+
+**Returns**
+
+- An array of freets by tag
+
 #### `GET /api/freets?author=USERNAME` - Get freets by author
 
 **Returns**
@@ -208,6 +214,20 @@ This renders the `index.html` file that will be used to interact with the backen
 - `403` if the user is not logged in
 - `400` If the freet content is empty or a stream of empty spaces
 - `413` If the freet content is more than 140 characters long
+
+#### `POST /api/freets/:freetId?` - Comment on an existing freet
+
+**Returns**
+
+- A success message
+- A object with the created comment
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId does not exist
+- `400` If the freet content is empty
+- `413` If the fret content is not valid
 
 #### `DELETE /api/freets/:freetId?` - Delete an existing freet
 
@@ -239,6 +259,37 @@ This renders the `index.html` file that will be used to interact with the backen
 - `403` if the user is not the author of the freet
 - `400` if the new freet content is empty or a stream of empty spaces
 - `413` if the new freet content is more than 140 characters long
+
+#### `GET /api/freets/:id/comments` - Get the comments to a freet
+
+**Returns**
+
+- An array of comments
+
+**Throws**
+
+- `404` if the id does not exist
+
+#### `GET /api/freets/:id/comments?forum=BOOLEAN` - Get comments to a freet of type forum or not forum
+
+**Returns**
+
+- An array of comments
+
+**Throws**
+
+- `404` if the id does not exist
+
+#### `GET /api/home?page=<n>` - Get the page number, n, of freets for the signed-in user
+
+**Returns**
+
+- An array of 20 freets
+
+**Throws**
+
+- `400` if the input n is not a number with at most 3 digits
+- `403` if the user is not logged in
 
 #### `POST /api/users/session` - Sign in user
 
