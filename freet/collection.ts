@@ -37,6 +37,7 @@ class FreetCollection {
 
     if (parent) {
       parentFreet = await FreetModel.findById(parent);
+      freet.tags = null;
       if ((parentFreet?.forum) || (parentFreet.parent === undefined && content.length > 140)) {
         freet.forum = true;
       }
