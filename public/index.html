@@ -5,6 +5,7 @@
   <meta name="author" content="6.170 Staff">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="/scripts/comment.js"></script>
   <script src="/scripts/freet.js"></script>
   <script src="/scripts/user.js"></script>
   <script src="/scripts/index.js"></script>
@@ -93,7 +94,24 @@
             <label for="content">Content:</label>
             <textarea id="content" name="content"></textarea>
           </div>
+          <div>
+            <label for="tag">Tag:</label>
+            <input name="tag" type="text">
+          </div>
           <input type="submit" value="Create Freet">
+        </form>
+
+        <form id="comment-freet">
+          <h3>Comment On Freet</h3>
+          <div>
+            <label for="id">ID:</label>
+            <input name="id" type="text">
+          </div>
+          <div>
+            <label for="content">Content:</label>
+            <textarea name="content" id="content"></textarea>
+          </div>
+          <input type="submit" value="Create Comment">
         </form>
 
         <form id="edit-freet">

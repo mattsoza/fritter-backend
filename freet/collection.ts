@@ -83,6 +83,16 @@ class FreetCollection {
   }
 
   /**
+   * Get all the freets with the given tag
+   *
+   * @param {string} tag - The tag of freets
+   * @return {Promise<HydratedDocument<Freet>[]>} - An array of all of the freets
+   */
+  static async findAllWithTag(tag: string): Promise<Array<HydratedDocument<Freet>>> {
+    return FreetModel.find({tags: tag});
+  }
+
+  /**
    * Get 1 page of freets, specifided by page number
    *
    * @param {int} pageNumber - The page number we want freets from

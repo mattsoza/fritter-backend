@@ -36,6 +36,10 @@ router.get(
       return;
     }
 
+    if (req.query.tag !== undefined) {
+      const allFreets = await FreetCollection.findAllWithTag(req.query.tag as string);
+    }
+
     const allFreets = await FreetCollection.findAll();
     const response = allFreets.map(util.constructFreetResponse);
     res.status(200).json(response);
