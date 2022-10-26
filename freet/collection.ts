@@ -104,7 +104,7 @@ class FreetCollection {
     const page = pageNumber >= 1 ? (pageNumber - 1) : 0;
     const date = new Date();
 
-    return FreetModel.find({dateModified: {$lte: date}})
+    return FreetModel.find({dateModified: {$lte: date}, parent: null})
       .skip(resultsPerPage * page)
       .limit(resultsPerPage);
   }

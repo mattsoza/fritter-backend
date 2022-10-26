@@ -104,6 +104,8 @@ POST    /api/freets/:id                         [x]    // Posts a comment on the
 GET     /api/home?page=<n>  [x]  // Gets all the freets for page n, 20 per page
 
 
+
+
 **Sign-in sign-out functionality**
 POST    /api/users/sessions                     [x]    // Signs-in a user
 DELETE  /api/users/sessions                     [x]    // Signs-out a user
@@ -117,4 +119,10 @@ GET     /api/users/id/followers
 Interesting problem: If you delete a freet, should its subfreets also be deleted? I think the answer should be no.
 
 10/24/2022, 1:30am
-Solved the problem of comments and freets. I ended up creating new router paths and middleware to validate them. It still makes sense to have them be the same object, but they definitely have different uses.
+Solved the problem of comments and freets. I ended up creating new router paths and middleware to validate them. 
+It still makes sense to have them be the same object, but they definitely have different uses.
+
+10/25/2022
+Implementing tags right now. Since I differentiate between freets and comments, even if they share the same place 
+in the database, I've decided to make it so that only top-level freets can have tags, and their descendants 
+inherit the tags of their root Freet.
