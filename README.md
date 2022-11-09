@@ -217,6 +217,10 @@ This renders the `index.html` file that will be used to interact with the backen
 
 #### `POST /api/freets/:freetId?` - Comment on an existing freet
 
+**Body**
+
+- `content` _{string}_ - The new content of the freet
+
 **Returns**
 
 - A success message
